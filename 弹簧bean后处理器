@@ -1,0 +1,481 @@
+<！DOCTYPE html >
+< html  lang =“ zh-CN ” >
+< head > < meta  name =“ generator ” content =“ Hexo 3.9.0 ” >
+< meta  charset =“ utf-8 ” >
+< meta  http-equiv =“ X-UA-Compatible ” content =“ IE = edge，chrome = 1 ” >
+< meta  name =“ renderer ” content =“ webkit ” >
+< meta  http-equiv =“ Cache-Control ” content =“ no-siteapp ” >
+< meta  name =“ viewport ” content =“ width = device-width，initial-scale = 1.0 ” >
+
+< title > Spring实战：通过BeanPostProcessor动态注入ID生成器||沉潜飞动|君子藏器于身，待时而动。</ title >
+< meta  name =“ description ” content =“此处通过实战的方式，了解BeanPostProcessor的作用。 ” >
+<元 名称=“关键字” content =“ BeanPostProcessor，实战” >
+<元 属性=“ og：type ”内容=“文章” >
+< meta  property =“ og：title ” content =“ Spring实战：通过BeanPostProcessor动态注入ID生成器” >
+<元 属性=“ og：url ”内容=“ https://www.howardliu.cn/spring-beanpostprocessor/index.html ” >
+<元 属性=“ og：site_name ” content =“沉潜飞动” >
+< meta  property =“ og：description ” content =“此处通过实战的方式，了解BeanPostProcessor的作用。 ” >
+<元 属性=“ og：locale ”内容=“ zh-CN ” >
+<元 属性=“ og：image ”内容=“ http://static.howardliu.cn/spring/pine-5541335_1920.jpg ” >
+< meta 属性=“ og：image ”内容=“ http://static.howardliu.cn/spring/1350888580_1225.jpg ” >
+<元 属性=“ og：image ”内容=“ http://static.howardliu.cn/about/kanshanshuo.png ” >
+<元 属性=“ og：updated_time ”内容=“ 2021-04-25T09：03：15.000Z ” >
+<元 名称=“ twitter：card ”内容=“摘要” >
+< meta  name =“ twitter：title ” content =“ Spring实战：通过BeanPostProcessor动态注入ID生成器” >
+< meta  name =“ twitter：description ” content =“此处通过实战的方式，了解BeanPostProcessor的作用。 ” >
+<元 名称=“ twitter：image ”内容=“ http://static.howardliu.cn/spring/pine-5541335_1920.jpg ” >
+
+<元 名称=“关键字” content =“ BeanPostProcessor，实战” >
+
+
+< meta  name =“ description ” content =“此处通过实战的方式，了解BeanPostProcessor的作用。 ” >
+
+< meta  name =“ author ” content =“ Howard Liu，howardliu1988 @ 163.com ” >
+
+
+< link  rel =“快捷方式图标” href =“ /favicon.png ”输入=“ image / x-icon ” >
+< link  rel =“图标” href =“ /favicon.png ” >
+
+< link  rel =“ stylesheet ” href =“ //cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css ” >
+<链接 rel =“样式表” href =“ /css/theme.css ” >
+< link  rel =“ stylesheet ” href =“ /css/syntax.css ” >
+<链接 rel =“样式表” href =“ /css/font-awesome/css/font-awesome.min.css ” >
+< link  rel =“ stylesheet ” href =“ //cdn.bootcss.com/highlight.js/9.1.0/styles/arta.min.css ” >
+<！-百度分析->
+
+<脚本>
+    //百度分析
+    var  _hmt  =  _hmt  ||  [ ] ;
+    （函数 （） {
+        var  hm  =  document 。createElement （“ script” ）;
+        嗯。src  =  “ //hm.baidu.com/hm.js?bbbf795fe3b264fb8122078f86cbaae5” ；
+        var  s  =  document 。getElementsByTagName （“ script” ）[ 0 ] ;
+        s 。parentNode 。insertBefore （hm ， s ）;
+    } ）（）;
+</脚本>
+
+</头>
+<身体>
+< nav  class =“ navbar navbar-inverse navbar-fixed-top ” >
+    < div 类=“容器” >
+        < div  class =“ navbar-header ” >
+            <按钮 类型=“按钮”类=“导航栏切换”数据切换=“折叠”数据目标=“ .navbar折叠” >
+                < span  class =“ icon-bar ” > </ span >
+                < span  class =“ icon-bar ” > </ span >
+                < span  class =“ icon-bar ” > </ span >
+            </按钮>
+            
+            <一 类= “导航栏品牌” HREF =“ /。 ” >沉潜飞动</一>
+        </ div >
+        < div 类=“折叠navbar-折叠” >
+            < ul  class =“ nav navbar-nav ” >
+                
+                <锂> <一个 HREF = “ /。 ”类=“当前” > <我 类=“图标家庭” >首页</我> </一> </李>
+                
+                <锂> <一个 HREF = “ /档案/ ” > <我 类=“图标-归档” >归档</我> </一> </李>
+                
+                <锂> <一个 HREF = “ /atom.xml ” > <我 类=“图标-RSS ” >订阅</我> </一> </李>
+                
+                <锂> <一个 HREF = “ /左右/ ” > <我 类=“图标-约” >关于</我> </一> </李>
+                
+            </ ul >
+        </ div >
+    </ div >
+</导航>
+< div  class =“ wrapper ” >
+    < div  class =“ content ” >
+        < div  class =“ container container-center ” >
+            < div  class =“ row ” >
+                < div  class =“ col-md-8 ” >
+                    < div  class =“ article ” >
+    < div  class =“ well ” >
+        < H1 > <一个 HREF = “ /弹簧的BeanPostProcessor / ” >春实战：通过BeanPostProcessor的动态注入ID生成器</一> </ H1 >
+        < div  class =“ post-meta ” >
+            < div  class =“ post-time ” >
+                < i  class =“ fa fa-calendar ” > </ i > <时间> 2021-04-25 </时间>
+            </ div >
+            < div  class =“ post-visitors-count ” >
+                < i  class =“ fa fa-ge ” > </ i >
+                < span  id =“ / spring-beanpostprocessor / ” class =“ leancloud_visitors ” data-flag-title =“ Spring实战：通过BeanPostProcessor动态注入ID生成器” >
+                    < span  class =“ post-meta-item-text ” >阅读量</ span >
+                    < i  class =“ leancloud-visitors-count ” > 0 </ i >
+                </ span >
+            </ div >
+        </ div >
+        < div  class =“ post-content article-entry ” >
+            <！- 
+    <div id =“ toc” class =“ toc-content”>
+      <strong class =“ toc-title”>目录</ strong>
+      <ol class =“ toc”> <li class =“ toc-item toc-level-2”> <aclass="toc-link"href="#实现"><span class =“ toc-text”>实现</ span> </a> <ol class =“ toc-child”> <li class =“ toc-item toc-level-3”> <a class =“ toc-link” href =“＃自定义注解” > <span class =“ toc-text”>自定义注释解</ span> </a> </ li> <li class =“ toc-item toc-level-3”> <a class =“ toc-link” href =“＃定义-ID-生成器”> <span class =“ toc-text”>定义ID生成器</ span> </a> </ li> <li class =“ toc-item toc-level- 3“> <aclass="toc-link"href="#定义-BeanPostProcessor"><span class =” toc-text“>定义BeanPostProcessor </ span> </a> </ li> <li class =“ toc-item toc-level-3”> <aclass="toc-link"href="#测试我们的代码"><span class =“ toc-text”>测试我们的代码</ span > </a> </ li> </ ol> </ li> <li class =“ toc-item toc-level-2”> <aclass="toc-link"href="#文末思考">< span class =“ toc-text”>文末思考</ span> </a> </ li> <li class =“ toc-item toc-level-2”> <a class =“ toc-link” href =“ ＃原始“> <span class =” toc-text“>源码</ span> </a> </ li> <li class =” toc-item toc-level-2“> <a class =” toc-link “ href =”＃参考“> <span class =” toc-text“>参考</ span> </a> </ li> <li class =” toc-item toc-level-2“> <a class = “ toc-link” href =“＃推荐阅读”> <span class =“ toc-text”>推荐阅读</ span> </a> </ li> </ ol>
+    </ div>
+ ->
+            < p > < img  src =“ http://static.howardliu.cn/spring/pine-5541335_1920.jpg ” alt =“ Spring实战：通过BeanPostProcessor动态注入ID生成器” > </ p >
+< p >你好，我是看山。</ p >
+< p >在分布式系统中，我们会需要ID生成器的组件，这个组件可以实现帮助我们生成顺序的或者带业务意味着的ID。</ p >
+< p >目前有很多经典的ID生成方式，模拟数据库自增列（自增主键或序列），雪花算法，美团Leaf算法等等，所以，会有一些公司级或业务级的ID生成器组件就是通过BeanPostProcessor实现动态注入ID生成器的实战。</ p >
+<一个 id =“更多” > </ a >
+
+< p >在Spring中，实现注入的方式很多，选择springboot的启动程序，在自定义的Configuration中初始化ID生成器的Bean，业务代码中通过< code > @AutoWired </ code >或者< code > @Resource </代码>注入即可，开箱即用。这种方式简单直接，但是缺点也是过于简单，缺少了使用方自定义的入口。</ p >
+< p >考虑一下实际场景，在同一个业务单据中，要保持ID的唯一，但是在不同单据中，可以重复。而且，这些算法在生成ID的时候，为了保持多线程返回结果唯一，都会锁定共享资源。如果不同业务，并发情景不同，可能低并发的业务被高并发的业务划分获取ID，造成一些性能的损失。所以，我们要考虑将ID生成器，根据业务隔离开，这样springboot的启动程序就会足够不够灵活了。</ p >
+< H2  ID = “实现” > <一个 HREF =“ ＃实现”类=“ headerlink ”标题=“实现” > </一>实现</ H2 > < p >根据上面的需求，我们可以分几步实现我们的逻辑：</ p >
+< ol >
+< li >自定义属性注解，用于确定是否需要注入属性对象</ li >
+< li >定义ID生成器接口，实现类，以及工厂类，工厂类是为了根据定义创建不同的ID生成器实现对象</ li >
+< li >定义BeanPostProcessor，查找使用自定义注解定义的属性，实现注入</ li >
+</ ol >
+< H3  ID = “自定义注解” > <一个 HREF =“ ＃自定义注解”类=“ headerlink ”标题=“自定义注解” > </一>自定义注解</ H3 > < p >首先自定义一个注解，可以定义一个< code > value </ code >属性，作为隔离业务的标识：</ p >
+< pre > <代码 类=“ =” java “ > @Retention（RetentionPolicy.RUNTIME）
+@Target（{ElementType.FIELD，ElementType.METHOD}）
+public @interface IdGeneratorClient {
+    / **
+     * ID生成器名称
+     *
+     * @返回
+     * /
+    字符串value（）默认为“ DEFAULT”；
+} </ code > </ pre >
+< H3  ID = “定义-ID-生成器” > <一个 HREF =“ ＃定义-ID-生成器”类=“ headerlink ”标题=“定义ID生成器” > </一>定义ID生成器</ h3 > < p >定义ID生成器的接口：</ p >
+< pre > <代码 类=“ =” java “ >公共接口IdGenerator {
+    字符串groupName（）;
+
+    long nextId（）;
+} </ code > </ pre >
+< p >实现ID生成器接口，偷懒使用<代码>的AtomicLong </代码>实现自增，同时考虑ID生成器是分组的，通过<代码>的ConcurrentHashMap </代码>实现ID生成器的持有：< / p >
+< pre > <代码 类=“ java ” >类DefaultIdGenerator实现IdGenerator {
+    私有静态最终Map＆lt; String，AtomicLong＆gt; ID_CACHE ＝新的ConcurrentHashMap＆lt;＆gt;（新的HashMap＆lt;＆gt;（））；
+    私有最终String groupName;
+
+    DefaultIdGenerator（最终字符串groupName）{
+        this.groupName = groupName;
+        已同步（ID_CACHE）{
+            ID_CACHE.computeIfAbsent（groupName，key-> new AtomicLong（1））;
+        }
+    }
+
+    @Override
+    公共字符串groupName（）{
+        返回this.groupName;
+    }
+
+    @Override
+    公共长nextId（）{
+        返回ID_CACHE.get（this.groupName）.getAndIncrement（）;
+    }
+} </ code > </ pre >
+< p >如前面设计的，我们需要一个工厂类来创建ID生成器，示例中使用最简单的实现，我们真正使用的时候，还可以通过更加灵活的SPI实现（关于SPI的实现，这里挖个个坑，后面专门写文章填坑）：</ p >
+< pre > < code  class =“ java ” >公共枚举IdGeneratorFactory {
+    实例;
+
+    私有静态最终Map＆lt; String，IdGenerator＆gt; ID_GENERATOR_MAP ＝新的ConcurrentHashMap＆lt;＆gt;（新的HashMap＆lt;＆gt;（））；
+
+    公共同步IdGenerator创建（最终字符串groupName）{
+        返回ID_GENERATOR_MAP.computeIfAbsent（groupName，key-> new DefaultIdGenerator（groupName））;
+    }
+} </ code > </ pre >
+< H3  ID = “定义-BeanPostProcessor ” > <一个 HREF =“ ＃定义-BeanPostProcessor ”类=“ headerlink ”标题=“定义的BeanPostProcessor ” > </一>定义的BeanPostProcessor </ H3 > < p >前面都是属于基本操作，这里才是扩展的核心。我们的实现逻辑是：</ p >
+< ol >
+< li >扫描bean的所有属性，然后找到定义了< code > IdGeneratorClient </ code >注解的属性</ li >
+< li >获取注解的< code > value </ code >值，作为ID生成器的分组标识</ li >
+< li >使用<代码> IdGeneratorFactory </代码>这个工厂类生成ID生成器实例，这里会返回新建的或已经定义的实例</ li >
+< li >通过反射将ID生成器实例写入bean </ li >
+</ ol >
+< pre > <代码 类=“ =” java “ >公共类IdGeneratorBeanPostProcessor实现BeanPostProcessor {
+
+    @Override
+    公共对象postProcessBeforeInitialization（最终对象bean，最终字符串beanName）抛出BeansException {
+        返回豆
+    }
+
+    @Override
+    公共对象postProcessAfterInitialization（最终对象bean，最终字符串beanName）抛出BeansException {
+        parseFields（bean）;
+        返回豆
+    }
+
+    私人无效parseFields（最终对象bean）{
+        如果（bean == null）{
+            返回;
+        }
+        类＆lt;？＆gt; clazz = bean.getClass（）;
+        parseFields（bean，clazz）;
+
+        while（clazz.getSuperclass（）！= null＆amp;＆amp;！clazz.getSuperclass（）。equals（Object.class））{
+            clazz = clazz.getSuperclass（）;
+            parseFields（bean，clazz）;
+        }
+    }
+
+    private void parseFields（最终对象bean，Class＆lt;？＆gt; clazz）{
+        如果（bean == null || clazz == null）{
+            返回;
+        }
+
+        对于（最终字段字段：clazz.getDeclaredFields（））{
+            尝试 {
+                最终的IdGeneratorClient注释= AnnotationUtils.getAnnotation（field，IdGeneratorClient.class）;
+                如果（注释== null）{
+                    继续;
+                }
+
+                最终的字符串groupName =注解。值（）;
+
+                最终班级＆lt;？＆gt; fieldType = field.getType（）;
+                如果（fieldType.equals（IdGenerator.class））{
+                    最终的IdGenerator idGenerator = IdGeneratorFactory.INSTANCE.create（groupName）;
+                    invokeSetField（bean，field，idGenerator）;
+                    继续;
+                }
+
+                抛出新的RuntimeException（“未知分区类型无法初始化，bean：＆quot; + bean +＆quot;字段：＆quot; + field）;;
+            } catch（Throwable t）{
+                抛出新的RuntimeException（“初始化初始化失败，bean =” + bean +“，field =” + field，t）；
+            }
+        }
+    }
+
+    私有无效invokeSetField（最终对象bean，最终Field字段，最终Object参数）{
+        ReflectionUtils.makeAccessible（field）;
+        ReflectionUtils.setField（field，bean，param）;
+    }
+} </ code > </ pre >
+< p >实现<代码>的BeanPostProcessor </代码>接口需要完成<代码> postProcessBeforeInitialization </代码>和<代码> postProcessAfterInitialization </代码>两个方法的定义下图是弹簧中的Bean的实例化过程：< / p >
+< p > < img  src =“ http://static.howardliu.cn/spring/1350888580_1225.jpg ” alt =“ Spring中豆的实例化过程图示” > </ p >
+< p >从图中可以知道，Spring调用<代码> BeanPostProcessor </代码>的这两个方法时，bean已经被实例化，所有能注入的属性都已经被注入了，是一个完整的bean。而且两个方法的返回值，可以是原来的豆实例，也可以是包装后的实例，这就要看我们的定义了。</ p >
+< H3  ID = “测试我们的代码” > <一个 HREF =“ ＃测试我们的代码”类=“ headerlink ”标题=“测试我们的代码” > </一>测试我们的代码</ H3 > < p >写一个测试用例，验证我们的实现是否履行：</ p >
+< pre > <代码 类=“ =” java “ > @SpringBootTest
+类SpringBeanPostProcessorApplicationTests {
+    @IdGeneratorClient
+    私有IdGenerator defaultIdGenerator;
+    @IdGeneratorClient（“ group1”）
+    私人IdGenerator group1IdGenerator；
+
+    @测试
+    void contextLoads（）{
+        Assert.notNull（defaultIdGenerator，“注入失败”）;
+        System.out.println（defaultIdGenerator.groupName（）+＆quot; =＆gt;＆quot; + defaultIdGenerator.nextId（））;
+
+        Assert.notNull（group1IdGenerator，“注入失败”）;
+        for（int i = 0; i＆lt; 5; i ++）{
+            System.out.println（defaultIdGenerator.groupName（）+＆quot; =＆gt;＆quot; + defaultIdGenerator.nextId（））;
+            System.out.println（group1IdGenerator.groupName（）+＆quot; =＆quot; + group1IdGenerator.nextId（））;
+        }
+    }
+
+} </ code > </ pre >
+< p >运行结果为：</ p >
+< pre > <代码 类=“ log ” > DEFAULT =＆gt; 1个
+默认值=> 2个
+组1 =＆gt; 1个
+默认值=> 3
+组1 =＆gt; 2个
+默认值=> 4
+组1 =＆gt; 3
+默认值=> 5
+组1 =＆gt; 4
+默认值=> 6
+组1 =＆gt; 5 </ code > </ pre >
+< p >可以看到，默认的ID生成器与定义名称为group1的ID生成器是分别生成的，符合预期。</ p >
+< H2  ID = “文末思考” > <一个 HREF =“ ＃文末思考”类=“ headerlink ”标题=“文末思考” > </一>文末思考</ H2 > < p >我们实现了通过<代码> BeanPostProcessor </代码>实现自动注入自定义的业务对象，上面的实现还比较简单，有很多可以扩展的地方，某些工厂方法实现，可以利用SPI的方式更加灵活的创建ID生成器对象。同时，考虑到分布式场景，我们还可以在ID生成器实现类中，通过注入rpc实例，实现远程ID生成逻辑。</ p >
+< p >玩法无限，就看我们的想象了。</ p >
+< H2  ID =”源码“ > <一个 HREF =” ＃源码“类=” headerlink “标题=”源码“ > </一>源码</ H2 > < p >附上源码：<一个 HREF =” HTTPS： //github.com/howardliu-cn/effective-spring/tree/main/spring-beanpostprocessor “ target =” _blank “ rel =” noopener “>https://github.com/howardliu-cn/effective-spring/tree/main/spring-beanpostprocessor </ a > </ p >
+< H2  ID = “参考” > <一个 HREF =“ ＃参考”类=“ headerlink ”标题=“参考” > </一>参考</ H2 > < UL >
+<锂> <一个 HREF = “ https://howtodoinjava.com/spring-core/spring-bean-post-processors/ ”目标=“ _blank ”相对=“ noopener ” >弹簧的BeanPostProcessor实施例</一> </立>
+<锂> <一个 HREF = “ https://www.baeldung.com/spring-beanpostprocessor ”目标=“ _blank ”相对=“ noopener ” >弹簧的BeanPostProcessor </一> </李>
+</ ul >
+< H2  ID = “推荐阅读” > <一个 HREF =“ ＃推荐阅读”类=“ headerlink ”标题=“推荐阅读” > </一>推荐阅读</ H2 > < UL >
+<锂> <一个 HREF = “ https://www.howardliu.cn/springboot-action-gracefully-response/ ” > SpringBoot实战：一招实现结果的优雅响应</一> </李>
+<锂> <一个 HREF = “ https://www.howardliu.cn/springboot-action-gracefully-response-exception/ ” > SpringBoot实战：如何优雅的处理异常</一> </李>
+<锂> <一个 HREF = “ https://www.howardliu.cn/spring-beanpostprocessor/ ” >春实战：通过BeanPostProcessor的动态注入ID生成器</一> </李>
+<锂> <一个 HREF = “ https://www.howardliu.cn/spring-request-recorder/ ” >春实战：自定义过滤器优雅获取请求参数和响应结果</一> </李>
+</ ul >
+<小时>
+< p >你好，我是看山，公众号：看山的小屋，10岁老猿，开源贡献者。游于码界，戏享人生。</ p >
+< p >个人主页：<一个 HREF =” https://www.howardliu.cn “ > https://www.howardliu.cn </一> < BR >个人博文：<一个 HREF =” https：//开头www.howardliu.cn/spring-beanpostprocessor/ “ >春实战：通过BeanPostProcessor的动态注入ID生成器</一> < BR > CSDN主页：<一个 HREF =” http://blog.csdn.net/liuxinghao “目标=“ _blank ”rel =“noopener “ > http://blog.csdn.net/liuxinghao </一> < BR > CSDN博文：<一个 HREF =” https://blog.csdn.net/liuxinghao/article/details/116139540 “目标=” _blank “ rel =” noopener “ > Spring实战：通过BeanPostProcessor动态注入ID生成器</ a > </ p >
+< p > < img  src =“ http://static.howardliu.cn/about/kanshanshuo.png ” alt =“公众号：看山的小屋” > </ p >
+
+        </ div >
+        
+        < div  class =“标签” >
+            
+            <一个 HREF = “ /标签/ BeanPostProcessor的/ ” > BeanPostProcessor的</一>
+            
+            <一个 HREF = “ /标签/实战/ ” >实战</一>
+            
+        </ div >
+        
+        
+        < div  class =“ post-nav ” >
+            
+            <一个 类=“ pre ” href =“ / spring-request-recorder / ” >
+                < i  class =“ icon-previous ” > Spring实战：自定义过滤器优雅获取请求参数和响应结果</ i >
+            </ a >
+            
+            
+            <一个 类=“ next ” href =“ / java-concurrency-ordered-thread-print / ” >
+                < i  class =“ icon-next ” > Java并发基础（五）：面试实战之多线程顺序打印</ i >
+            </ a >
+            
+        </ div >
+        
+    </ div >
+</ div >
+
+    < div  class =“ well ” >
+        <部分 ID =“评论” >
+            < div  id =“ vcomment ”类=“评论” > </ div >
+<脚本 src =“ //cdn1.lncld.net/static/js/3.0.4/av-min.js ” > </脚本>
+<脚本 src =“ //unpkg.com/valine@1.3.10/dist/Valine.min.js ” > </脚本>
+<脚本>
+    新 缬氨酸（{
+        el：'.comment' ，
+        notify：“ false”  ===  “ true” ，
+        验证：“ false”  ===  “ true” ，
+        访客：“ true”  ===  “ true” ，
+        app_id：“ 8oLP4PUvcvP9832UMNhKJMp4-gzGzoHsz” ，
+        app_key：“ Vub5Jl1Nehop0NlWaRdWVS3S” ，
+        占位符：“请评论” ，
+        头像：“怪兽”
+    } ）;
+</脚本>
+
+        </部分>
+    </ div >
+
+
+                </ div >
+                < div  class =“ col-md-4 hidden-xs ” >
+                    
+< div  class =“侧边栏” >
+    < div  class =“ well ” >
+        < h2 >标签云</ h2 >
+        <一个 HREF = “ /标签/微服务/ ”风格=“字体大小：15像素; ” >微服务</一>  <一个 HREF =“ /标签/爪哇/ ”风格=“字体大小：15像素; ” >的java </一>  <一个 HREF =” /标签/云计算/ “风格=”字体大小：15像素; “ >云计算</一>  <一个 HREF =”/ tags /概念/ “样式=”字体大小：15像素; “ >概念</一>  <一个 HREF =” /标签/算法/ “风格=”字体大小：15像素; “ >算法</一>  <一个 HREF =” /标签/数据结构/ “风格=”字体大小：15像素; “ >数据结构</一>  <一个 HREF =” /标签/八皇后问题/ “风格=”字体大小：15像素; “ >八皇后问题</一>  <一个 HREF =” /标签/方法论/ “风格=”字体大小：15像素; “ >方法论</一>  <一个 HREF =” /标签/线性代数/ “风格=”字体大小：15像素; “ >线性代数</一>  <一个 HREF =” /标签/矩阵/ “风格=”字体大小：15像素; “ >矩阵</一>  <a  href =“ / tags /矩阵乘法/“ style =” font-size：15px; “ >矩阵乘法</ a >  < a  href =” / tags / redis / “ style =” font-size：15px; “ > redis </ a >  < a  href =” / tags /翻译/ “ style =” font-size：15px; “ >翻译</ a >  < a  href =” / tags /分布式锁/ “ style =” font-size：15px; “ >分布式锁</一>  <一个 HREF =” /标签/ mongodb的/ “风格=”字体大小：15像素; “ > mongodb的</一>  <一个 HREF =” /标签/ 2PC / “风格=”字体-大小：15像素; “ > 2PC </一>  <一个 HREF =” /标记/错误/ “风格=”字体大小：15像素; “ >错误</一> <一个 HREF= “ /标签/中文字符/ ”风格=“字体大小：15像素; ” >中文字符</一>  <一个 HREF =“ /标签/ DevOps的/ ”风格=“字体大小：15像素; ” >的DevOps < /一>  <一个 HREF = “ /标签/ CD / ”风格=“字体大小：15像素; ” > CD </一>  <一个 HREF =“ /标签/代码质量/ ”样式=“font-size：15px; “ >代码质量</ a >  < a  href =” / tags / SonarQube / “ style =” font-size：15px; “ > SonarQube </ a >  < a  href =” / tags / Jenkins-Pipeline / “ style =” font-size：15px; “ > Jenkins Pipeline </ a >  < a  href =” / tags /设计模式/ “ style =” font-size：15px;设计模式</一>  <一个 HREF =” /标签/双指针/ “风格=”字体大小：15像素; “ >双指针</一>  <一个 HREF =” /标签/滑动窗口/ “风格=”字体大小：15像素; “ >滑动窗口</一>  <一个 HREF =” /标签/系统运维/ “风格=”字体大小：15像素; “ >系统运维</一>  <一个 HREF= “ /标签/ weblogic的/ ”风格=“字体大小：15像素; ” > weblogic的</一>  <一个 HREF =“ /标签/ ModuleException / ”风格=“字体大小：15像素; ” > ModuleException </一>  <一个 HREF =” /标签/部署/ “风格=”字体大小：15像素; “ >部署</一>  <一个 HREF =”/ tags / Nginx / “样式=”字体大小：15像素; “ > Nginx的</一>  <一个 HREF =” /标签/ EOS / “风格=”字体大小：15像素; “ > EOS </一>  <一个 HREF =” /标签/ BPS / “ style =” font-size：15px; “ > BPS </ a >  < a  href =” / tags / plugins / “ style =” font-size：15px; “>插件</一>  <一个 HREF =” /标签/蚀/ “风格=”字体大小：15像素; “ >蚀</一>  <一个 HREF =” /标签/操作技巧/ “风格=”字体大小：15像素; “ >操作技巧</一>  <一个 HREF =” /标签/窗/ “风格=”字体大小：15像素; “ >窗口</一>  <a  href =“/ tags /自动登录/ “ style =” font-size：15px; “ >自动登录</ a >  < a  href =” / tags / os / “ style =” font-size：15px; “ > os </ a >  < a  href =” / tags / ssh / “ style =” font-size：15px; “ > ssh </ a >  < a  href =” / tags / passwordless / ““ >无密码</ a >  < a  href =” / tags / MQ / “ style =” font-size：15px; “ > MQ </ a >  < a  href =” / tags / RabbitMQ / “ style =” font-size：15px; “ > RabbitMQ </ a >  < a  href =” / tags / oom / “ style =” font-size：15px; “ > oom < 一个 HREF = “ /标签/ MySQL的/ ”风格=“字体大小：15像素; ” > MySQL的</一>  <一个 HREF =“ /标签/权威/ ”风格=“字体大小：15像素; ” >权威< /一>  <一个 HREF =” /标签/ Ubuntu的/ “风格=”字体大小：15像素; “ > ubuntu的</一>  <一个 HREF =”/ tags / ufw / “15px; “ >      Dockerfile </一>  <一个 HREF =” /标签/ GIT中/ “风格=”字体大小：15像素; “ > GIT中</一>  <一个 HREF =” /标签/大数据/ “风格=”字体大小：15px的; “ >大数据</一>  <一个 HREF =” /标签/ hadoop的/ “风格=”字体大小：15像素; “ > hadoop的</一> <一个 HREF= “ /标签/纱线/ ”风格=“字体大小：15像素; ” >纱</一>  <一个 HREF =“ /标签/菲尼克斯/ ”风格=“字体大小：15像素; ” >凤凰</一>  <一个 HREF = “ /标签/开源/ ”风格=“字体大小：15像素; ” >开源</一>  <一个 HREF =“ /标签/ HDFS / ”样式=“font-size：15px; “ > hdfs </ a >  < a  href =” / tags / ha / “ style =” font-size：15px; “ > ha </ a >  < a  href =” / tags / QJM / “ style =” font-size：15px; “ > QJM </ a >  < a  href =” / tags / rm / “ style =” font-size：15px; “ > <一个 HREF = “ /标签/映射精简/ ”风格=“字体大小：15像素; ” >映射精简</一>  <一个 HREF =“ /标签/网络/ ”风格=“字体大小：15像素; ” >网络</一>  <一个 HREF =” /标签/ HTTP / “风格=”字体大小：15像素; “ > HTTP </一>  <一个 HREF =”/ tags / hbase / “风格=”字体大小：15像素; “ > HBase的</一>  <一个 HREF =” /标签/模式/ “风格=”字体大小：15像素; “ >模式</一>  <一个 HREF =” /标记/ ArrayList / “ style =” font-size：15px; “ > ArrayList </ a >  < a  href =” / tags /线程安全/ “ style =” font-size：15px;“ >线程安全</一>  <一个 HREF =” /标签/的IPv4 / “风格=”字体大小：15像素; “ > IPv4的</一>  <一个 HREF =” /标签/ INT / “风格=”字体大小：15px的; “ > INT </一>  <一个 HREF =” /标签/注释/ “风格=”字体大小：15像素; “ >注释</一>  <一个 HREF= “ /标签/开发/ ”风格=“字体大小：15像素; ” >开发</一>  <一个 HREF =“ /标签/规范/ ”风格=“字体大小：15像素; ” >规范</一>  <一个 HREF = “ /标记/ JVM / ”风格=“字体大小：15像素; ” > JVM </一>  <一个 HREF =“ /标记/ GC / ”style =“ font-size：15px;“ > gc </ a >  < a  href =” / tags / concurrency / “ style =” font-size：15px; “ >并发</ a >  < a  href =” / tags / thread / “ style =” font-size：15px; “ >线程</ a >  < a  href =” / tags / jdk8 / “ style =” font-size：15px; “ > <一个 HREF = “ /标签/流/ ”风格=“字体大小：15像素; ” >流</一>  <一个 HREF =“ /标记/可选择的/ ”风格=“字体大小：15像素; ” >可选</一>  <一个 HREF = “ /标签/进口/ ”风格=“字体大小：15像素; ” >导入</一>  <a  href =“ / tags / jdk /“ style =” font-size：15px; “ > jdk </ a >  < a  href =” / tags /工具/ “ style =” font-size：15px; “ >工具</ a >  < a  href =” / tags / synchronized / “ style =” font-size：15px; “ >已同步</ a >  < a  href =” / tags / JDK8 / “ style =” font-size：15px; ”> JDK8 </一>  <一个 HREF =” /标签/收集器/ “风格=”字体大小：15像素; “ >收集器</一>  <一个 HREF =” /标签/ JSP / “风格=”字体大小：15px的; “ > JSP </一>  <一个 HREF =” /标签/的freemarker / “风格=”字体大小：15像素; “ > freemarker的</ a >  <一个 HREF = “ /标签/队列/ ”风格=“字体大小：15像素; ” >队列</一>  <一个 HREF =“ /标记/数据一致性/ ”风格=“字体大小：15像素; ” >数据一致性</一>  <一个 HREF =” /标签/事务/ “风格=”字体大小：15像素; “ >事务</一>  <一个 HREF =”/ tags /可靠事件/ “ style =”font-size：15px; “ >可靠事件</ a >  < a  href =” / tags /单体架构/ “ style =” font-size：15px; “ >单体架构</ a >  < a  href =” / tags /改造/ “ style =” font-size：15px; “ >重构</一>  <一个 HREF =” /标签/中间件/ “风格=”字体大小：15像素; “ > <一个 HREF =” /标签/消息队列/ “风格=”字体大小：15像素; “ >消息队列</一>  <一个 HREF =” /标签/选型/ “风格=”字体大小：15像素; “ >选型</一>  <一个 HREF =” /标签/架构/ “风格=”字体大小：15像素; “ >架构</一>  <一个 HREF =”/ tags /操作系统/ “ style= “字体大小：15像素; ” >操作系统</一>  <一个 HREF =“ /标签/ LINUX / ”风格=“字体大小：15像素; ” > linux的</一>
+    </ div >
+</ div >
+
+< div  class =“侧边栏” >
+    < div  class =“ well ” >
+        < h2 >压缩</ h2 >
+        < ul  class =“存档列表” > < li  class =“存档列表项目” > <一个 类=“存档列表链接” href =“ / archives / 2021/05 / ” > 2021年05月< / a > < span  class =“ archive-list-count ” > 3 </ span > </ li > < li  class =“存档列表项目“ > <一 类= “归档一览链路” HREF =“ /档案/ 2021/04 / ” > 2021年04月</一> <跨度 类=“归档列表计数” > 3 </跨度> </立> <李 类=“归档列表项‘ > <一 类=’归档一览链路‘ HREF =’ /档案/ 2021/03 / ” >2021年03月</ a >< span  class =“ archive-list-count ” > 4 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2021/02 / “ > 2021年02月</ a > < span  class =” archive-list-count “ > 4 </ span > </ li > <li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2021/01 / ” > 2021年01月</ a > < span  class =“ archive-list -count “ > 4 </ span > </ li > < li  class =” archive-list-item “ > <一个 类=” archive-list-link “href =“/ archives / 2020/12 / “ > 2020年12月</ a > < span  class =” archive-list-count “ > 1 </ span > </ li > < li  class =” archive-list-item “ > <一 类=”归档一览链路“ HREF =” /档案/ 2020/09 / “ > 2020年09月</一> <跨度 类=”存档列表计数“ >1 </跨度> </李> <李 类= “归档列表项” > <一 类=“归档一览链路” HREF =“ /档案/ 2020/08 / ” > 2020年08月</ a > < span  class =“ archive-list-count ” > 1 </ span > </ li > < li  class =“ archive-list-item ”> < a class =“ archive-list-link ” href =“ / archives / 2020/07 / ” > 2020年07月</ a > < span  class =“ archive-list-count ” > 3 </ span > </ li > < li  class =“ archive-list-item ” > <一个 class =“ archive-list-link ” href =“ / archives / 2020/03 / ” > 2020年03月</ a > <span  class =“ archive-list-count ” > 2 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2020 / 02 / “ > 2020年02月</ a > < span  class =” archive-list-count “ > 2 </ span > </ li ><李 类=”归档列表项“ > <一 类=”归档一览链路“ HREF =” /档案/ 2020/01 / “ > 2020年01月</一> <跨度 类=”归档列表-计数“ > 4 </ span > </ li > < li  class =” archive-list-item “ > < a  class =” archive-list-link “href =“/ archives / 2019/11 / “ > 2019年11月</ a > < span  class =” archive-list-count “ > 3 </ span > </ li > < li  class =” archive-list-item “ > <一 类=”归档一览链路“ HREF =” /档案/ 2019/10 / “ > 2019年10月</一> <跨度 类=”存档列表计数“ >2 </跨度> </李> <李 类= “归档列表项” > <一 类=“归档一览链路” HREF =“ /档案/ 2017/10 / ” > 2017年10月</ a > < span  class =“ archive-list-count ” > 1 </ span > </ li > < li  class =“ archive-list-item ”> < a class =“ archive-list-link ” href =“ / archives / 2017/09 / ” > 2017年09月</ a > < span  class =“ archive-list-count ” > 2 </ span > </ li > < li  class =“ archive-list-item ” > <一个 class =“ archive-list-link ” href =“ / archives / 2017/08 / ” > 2017年08月</ a > <span  class =“ archive-list-count ” > 1 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2017 / 07 / “ > 2017年07月</ a > < span  class =” archive-list-count “ > 4 </ span > </ li ><李 class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2017/06 / ” > 2017年06月</ a > < span  class =“ archive-list-计算“ > 2 </ span > </ li > < li  class =” archive-list-item “ > < a  class =” archive-list-link “href =“/ archives / 2017/04 / “ > 2017年04月</ a > < span  class =” archive-list-count “ > 1 </ span > </ li > < li  class =” archive-list-item “ > <一 类=”归档一览链路“ HREF =” /档案/ 2017/03 / “ > 2017年03月</一> <跨度 类=”存档列表计数“ >3 </跨度> </李> <李 类= “归档列表项” > <一 类=“归档一览链路” HREF =“ /档案/ 2017/02 / ” > 2017年02月</ a > < span  class =“ archive-list-count ” > 1 </ span > </ li > < li  class =“ archive-list-item ”> < a class =“ archive-list-link ” href =“ / archives / 2016/08 / ” > 2016年08月</ a > < span  class =“ archive-list-count ” > 1 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2016/07 / ” > 2016年07月</ a > <span  class =“ archive-list-count ” > 3 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2016 / 05 / “ > 2016年05月</ a > < span  class =” archive-list-count “ > 3 </ span > </ li ><李 class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2016/03 / ” > 2016年03月</ a > < span  class =“ archive-list-计数“ > 1 </ span > </ li > < li  class =” archive-list-item “ > < a  class =” archive-list-link “href =“/ archives / 2016/01 / “ > 2016年01月</ a > < span  class =” archive-list-count “ > 4 </ span > </ li > < li  class =” archive-list-item “ > <一 类=”归档一览链路“ HREF =” /档案/ 2015/12 / “ > 2015年12月</一> <跨度 类=”存档列表计数“ >3 </跨度> </李> <李 类= “归档列表项” > <一 类=“归档一览链路” HREF =“ /档案/ 2015/11 / ” > 2015年11月</ a > < span  class =“ archive-list-count ” > 6 </ span > </ li > < li  class =“ archive-list-item ”> < a class =“ archive-list-link ” href =“ / archives / 2015/09 / ” > 2015年09月</ a > < span  class =“ archive-list-count ” > 4 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2015/04 / ” > 2015年04月</ a > <span  class =“ archive-list-count ” > 2 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2015 / 03 / “ > 2015年03月</ a > < span  class =” archive-list-count “ > 5 </ span > </ li ><李 class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2015/02 / ” > 2015年02月</ a > < span  class =“ archive-list-计数“ > 1 </ span > </ li > < li  class =” archive-list-item “ > < a  class =” archive-list-link “href =“/ archives / 2015/01 / “ > 2015年01月</ a > < span  class =” archive-list-count “ > 2 </ span > </ li > < li  class =” archive-list-item “ > <一 类=”归档一览链路“ HREF =” /档案/ 2014/12 / “ > 2014年12月</一> <跨度 类=”存档列表计数“ >3 </跨度> </李> <李 类= “归档列表项” > <一 类=“归档一览链路” HREF =“ /档案/ 2014/10 / ” > 2014年10月</ a > < span  class =“ archive-list-count ” > 7 </ span > </ li > < li  class =“ archive-list-item ”> < a class =“ archive-list-link ” href =“ / archives / 2014/09 / ” > 2014年09月</ a > < span  class =“ archive-list-count ” > 3 </ span > </ li > < li  class =“ archive-list-item ” > <一个 class =“ archive-list-link ” href =“ / archives / 2014/07 / ” > 2014年07月</ a > <span  class =“ archive-list-count ” > 1 </ span > </ li > < li  class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2014 / 06 / “ > 2014年06月</ a > < span  class =” archive-list-count “ > 1 </ span > </ li ><李 class =“ archive-list-item ” > <一个 类=“ archive-list-link ” href =“ / archives / 2013/10 / ” > 2013年10月</ a > < span  class =“ archive-list-计数“ > 1 </ span > </ li > </ ul >
+    </ div >
+</ div >
+
+
+< div  class =“侧边栏” >
+    < div  class =“ well ” >
+        < h2 >最新文章</ h2 >
+        < UL 类= “后列表” > <李 类=“后列表项” > <一 类=“后列表链接” HREF =“ / java的util的-可选/ ” >一文掌握Java8的可选的6种操作</ a > </ li > < li  class =“ post-list-item ” > < a  class =“ post-list-link ” href =“/ java-stream-collectors / “>一文掌握Java8 Stream中收集器的24个操作</ a > </ li > < li  class =“ post-list-item ” > < a  class =“ post-list-link ” href =“ / longest-substring- without-repeating-character / “ >面试真题：无重复字符的最长子串</ a > </ li > < li  class =” post-list-item “ > < a  class =”后列表链接“ href =“/ spring-request-recorder / “ > Spring实战：自定义过滤器优雅获取请求参数和响应结果</ a > </ li > < li  class =” post-list-item “ > < a  class =” post-list -link “ href =” / spring-beanpostprocessor / “ > Spring实战：通过BeanPostProcessor动态注入ID生成器</ a > </ li > </ ul >
+    </ div >
+</ div >
+
+                </ div >
+            </ div >
+        </ div >
+    </ div >
+    < div  class =“ side-button-wrap ” >
+        <一个 ID =“至顶部‘类=’侧按钮图标向上箭头‘ HREF =’ #top返回” > </一>
+        <一个 ID =“到户‘类=’侧按钮图标家庭‘ HREF =’ /。 ” > </一>
+        <一个 id =“ to-comment-button ”类=“侧面按钮icon-msg ” href =“ #comment ” > </ a >
+        <一个 ID =“至底部按钮‘类=’侧按钮图标向下箭头‘ HREF =’ #bottom网页” > </一>
+    </ div >
+    <一个 ID = “底部”名称=“底部” > </一>
+    < footer  id =“ footer ” class =“ footer-distributed ” style =“ background-color：＃222222; ” >
+    < div 类=“容器” >
+        < div  class =“ footer ” >
+            < p >霍华德柳＆副本; 2021年</ p >
+            < ul  class =“ social-media ” >
+                
+                <李>
+                    <一个 标题= “ github上” HREF =“ https://github.com/howardliu-cn ”目标=“ _blank ” >
+                        < i  class =“ fa fa-github fa-2x ” > </ i >
+                    </ a >
+                </ li >
+                
+                <李>
+                    <一个 标题= “ StackOverflow的” HREF =“ http://stackoverflow.com/users/4417033 ”目标=“ _blank ” >
+                        < i  class =“ fa fa-stack-overflow fa-2x ” > </ i >
+                    </ a >
+                </ li >
+                
+                
+                <李>
+                    <一个 标题= “电子邮件” HREF =“的mailto：howardliu1988@163.com ” >
+                        < i  class =“ fa fa-envelope fa-2x ” > </ i >
+                    </ a >
+                </ li >
+                
+                <李>
+                    <一个 标题=“ HEXO主题洁净的暗‘ HREF =’ https://github.com/howardliu-cn/hexo-theme-clean-dark ‘目标=’ _blank ” >
+                        < i  class =“ fa fa-film fa-2x ” > </ i >
+                    </ a >
+                </ li >
+                
+            </ ul >
+        </ div >
+    </ div >
+</ footer >
+
+</ div >
+<脚本 src =“ //cdn.bootcss.com/jquery/2.1.4/jquery.min.js ” > </脚本>
+<脚本 src =“ //cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js ” > </脚本>
+<脚本 src =“ //cdn.bootcss.com/highlight.js/9.1.0/highlight.min.js ” > </脚本>
+<脚本> hljs 。initHighlightingOnLoad （）; </脚本>
+<脚本 src =“ /js/header.js ” > </脚本>
+<脚本 src =“ /js/toc.js ” > </脚本>
+<！-[如果是IE 9]>
+<script src =“ // cdn.bootcss.com/respond.js/1.4.2/respond.min.js”> </ script>
+！[endif]->
+<！-fancybox->
+
+<脚本 src =“ //cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js ” > </脚本>
+<脚本 src =“ //cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js ” > </脚本>
+< link  href =“ //cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css ” rel =“样式表” >
+<脚本>
+    $ （文档）。准备就绪（函数 （） {
+        $ （“ img” ）。每个（函数 （索引， 项目） {
+            var  p  =  $ （项目）。父母（）[ 0 ] ;
+            如果（$ （p ）。是（'a' ）） {
+                $ （p ）。fancybox （）;
+                回报;
+            }
+            $ （p ）。追加（函数（） {返回 “<a id='fancybox_id_" +指数+ "'href='"  +  $（项目）ATTR（"src"）+ "'>。 </A>” ; } ）;  
+            项目。删除（）;
+            var  fancyboxItem  =  $ （“ #fancybox_id_”  +  index ）;
+            fancyboxItem 。追加（$ （项目））;
+            fancyboxItem 。fancybox （）;
+        } ）;
+    } ）;
+</脚本>
+
+<！-百度自动推送->
+
+    <脚本>
+        （函数（）{
+            var  bp  =  document 。createElement （'script' ）;
+            var  curProtocol  =  window 。位置。协议。split （'：' ）[ 0 ] ;
+            如果 （curProtocol  ===  'https' ） {
+                bp 。src  =  'https://zz.bdstatic.com/linksubmit/push.js' ;
+            }
+            其他 {
+                bp 。src  =  'http://push.zhanzhang.baidu.com/push.js' ;
+            }
+            var  s  =  document 。getElementsByTagName （“ script” ）[ 0 ] ;
+            s 。parentNode 。insertBefore （bp ， s ）;
+        } ）（）;
+        </脚本>
+
+<！-谷歌分析->
+
+<脚本>
+    // 谷歌分析
+    （函数（i ，s ，o ，g ，r ，a ，m ）{ i [ 'GoogleAnalyticsObject' ] = r ; i [ r ] = i [ r ] ||函数（）{
+        （我[ - [R ] 。q =我[ - [R ] 。q || [ ] ）。推（参数）} ，i [ r ] 。l = 1 *新 Date （）; a = s 。createElement （o ），
+            米=小号。getElementsByTagName （o ）[ 0 ] ; 一个。异步= 1 ; 一个。src = g ; 米。parentNode 。insertBefore （a ，m ）
+    } ）（窗口，文件，'脚本' ，'//www.google-analytics.com/analytics.js' ，'GA' ）;
+    ga （'create' ， 'UA-72122926-1' ， 'auto' ）;
+    ga （'send' ， 'pageview' ）;
+</脚本>
+
+
+<脚本 颜色=“ 255,255,255 ” opacity =“ 0.9 ” zindex =“ -1 ” count =“ 150 ” src =“ //cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min。 js “ > </脚本>
+</ body >
+</ html >
